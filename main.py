@@ -24,6 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent
 DIST_DIR = os.path.join(BASE_DIR, "dist")
 DATA_DIR = os.path.join(BASE_DIR, "data")
 PRODUCTS_FILE = os.path.join(DATA_DIR, "products.json")
+CATEGORIES_FILE = os.path.join(DATA_DIR, "categories.json")
 CONTACTS_FILE = os.path.join(DATA_DIR, "contacts.json")
 ORDERS_FILE = os.path.join(DATA_DIR, "orders.json")
 
@@ -36,6 +37,9 @@ def init_db():
         os.makedirs(DATA_DIR)
     if not os.path.exists(PRODUCTS_FILE):
         with open(PRODUCTS_FILE, "w", encoding="utf-8") as f:
+            json.dump([], f, indent=4)
+    if not os.path.exists(CATEGORIES_FILE):
+        with open(CATEGORIES_FILE, "w", encoding="utf-8") as f:
             json.dump([], f, indent=4)
     if not os.path.exists(CONTACTS_FILE):
         with open(CONTACTS_FILE, "w", encoding="utf-8") as f:
@@ -97,10 +101,8 @@ async def get_products(category: Optional[str] = None):
 
 @app.get("/api/categories")
 async def get_categories():
-    """Get all unique product categories"""
-    products = read_json(PRODUCTS_FILE)
-    categories = list(set(p.get("category") for p in products if p.get("category")))
-    return categories
+    """Get all categories with their details and images"""
+    return read_json(CATEGORIES_FILE)
 
 @app.get("/api/products/{product_id}")
 async def get_product(product_id: int):
